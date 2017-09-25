@@ -1,0 +1,44 @@
+{
+  "name": "isy-smartthings-server",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Insteon Hub (2245) API server for integration with a SmartThing controller",
+  "keywords": [],
+  "dependencies": {
+    "decamelize": "*",
+    "ejs": "*",
+    "grunt": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-jst": "*",
+    "grunt-contrib-less": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-sails-linker": "*",
+    "grunt-sync": "*",
+    "include-all": "*",
+    "isy-js": "*",
+    "js-yaml": "*",
+    "node-ssdp": "*",
+    "rc": "*",
+    "request": "*",
+    "request-promise-native": "*",
+    "sails": "*",
+    "sails-disk": "*",
+    "uppercamelcase": "*"
+  },
+  "scripts": {
+    "debug": "node debug app.js",
+    "start": "node app.js"
+  },
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tenstartups/isy-smartthings-server.git"
+  },
+  "author": "Marc Lennox <marc.lennox@gmail.com>",
+  "license": "*"
+}
