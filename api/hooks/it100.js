@@ -33,7 +33,7 @@ module.exports = (sails) => {
         })
 
         socket.on('connect', () => {
-          buffer = Buffer.alloc()
+          buffer = Buffer.alloc(0)
         })
 
         socket.on('data', data => {
