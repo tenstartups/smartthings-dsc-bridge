@@ -54,40 +54,12 @@ module.exports.routes = {
   'post /api/device/:id/token/:token': 'DeviceController.setToken',
   'delete /api/device/:id/token': 'DeviceController.deleteToken',
 
-  // Dimmable light controller actions
-  'get /api/dimmable_light/:id/status': 'DimmableLightController.status',
-  'post /api/dimmable_light/:id/refresh': 'DimmableLightController.refresh',
-  'post /api/dimmable_light/:id/on': 'DimmableLightController.on',
-  'post /api/dimmable_light/:id/off': 'DimmableLightController.off',
-  'post /api/dimmable_light/:id/level/:level': 'DimmableLightController.level',
-  'post /api/dimmable_light/:id/brighten': 'DimmableLightController.brighten',
-  'post /api/dimmable_light/:id/dim': 'DimmableLightController.dim',
+  // Alarm panel controller actions
+  'get /api/panel/:id/status': 'AlarmPanelController.status',
 
-  // Fan controller actions
-  'get /api/fan/:id/status': 'FanController.status',
-  'post /api/fan/:id/off': 'FanController.off',
-  'post /api/fan/:id/low': 'FanController.low',
-  'post /api/fan/:id/medium': 'FanController.medium',
-  'post /api/fan/:id/high': 'FanController.high',
+  // Alarm partition controller actions
+  'get /api/partition/:id/status': 'AlarmPartitionController.status',
 
-  // Light controller actions
-  'get /api/light/:id/status': 'LightController.status',
-  'post /api/light/:id/refresh': 'LightController.refresh',
-  'post /api/light/:id/on': 'LightController.on',
-  'post /api/light/:id/off': 'LightController.off',
-
-  // Outlet controller actions
-  'get /api/outlet/:id/status': 'OutletController.status',
-  'post /api/outlet/:id/refresh': 'OutletController.refresh',
-  'post /api/outlet/:id/on': 'OutletController.on',
-  'post /api/outlet/:id/off': 'OutletController.off',
-
-  // Dimmable light controller actions
-  'get /api/scene/:id/status': 'SController.status',
-  'post /api/scene/:id/refresh': 'SceneController.refresh',
-  'post /api/scene/:id/on': 'SceneController.on',
-  'post /api/scene/:id/off': 'SceneController.off',
-  'post /api/scene/:id/level/:level': 'SceneController.level',
-  'post /api/scene/:id/brighten': 'SceneController.brighten',
-  'post /api/scene/:id/dim': 'SceneController.dim'
+  // Alarm zone controller actions
+  'get /api/zone/:id/status': 'ZoneController.status'
 }

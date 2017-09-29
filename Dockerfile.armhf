@@ -1,7 +1,7 @@
 #
 # ISY994i device server for integration with the SmartThings Hub
 #
-# http://github.com/tenstartups/smartthings-isy-bridge
+# http://github.com/tenstartups/smartthings-dsc-bridge
 #
 
 FROM resin/raspberrypi3-alpine-node:latest

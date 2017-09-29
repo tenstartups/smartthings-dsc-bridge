@@ -3,7 +3,7 @@ jobs:
   build:
     environment:
       DOCKERFILE: Dockerfile.armhf
-      DOCKER_IMAGE: tenstartups/isy-smartthings-server:armhf
+      DOCKER_IMAGE: tenstartups/dsc-smartthings-server:armhf
     machine: true
     steps:
       - checkout

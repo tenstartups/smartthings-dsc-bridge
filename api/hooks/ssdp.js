@@ -8,8 +8,8 @@ const SSDP_SETTINGS = require('js-yaml')
                       .safeLoad(require('fs')
                       .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
                       .ssdp || {}
-const USN = `${SSDP_SETTINGS.usn_prefix || 'urn:schemas-upnp-org:service:ISYDeviceManager'}:${SERVER_SETTINGS.instance_number || 1}`
-const UDN = SSDP_SETTINGS.udn || 'uuid:c3c3c35a-4216-4079-84ae-e6d306ff9d7b'
+const USN = `${SSDP_SETTINGS.usn_prefix || 'urn:schemas-upnp-org:service:DSCAlarmManager'}:${SERVER_SETTINGS.instance_number || 1}`
+const UDN = SSDP_SETTINGS.udn || 'uuid:735c24c1-2cbe-46ef-97b3-92bca45ae8a3'
 
 module.exports = (sails) => {
   var server
@@ -35,7 +35,7 @@ module.exports = (sails) => {
     },
 
     initialize: (cb) => {
-      sails.after('hook:device_update:loaded', () => {
+      sails.after('hook:devsync:loaded', () => {
         advertiseIP = process.env.DEVICE_ADVERTISE_IP
         if (advertiseIP === undefined) {
           advertiseIP = require('ip').address()
