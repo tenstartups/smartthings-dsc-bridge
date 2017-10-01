@@ -21,7 +21,7 @@
     "grunt-sync": "*",
     "include-all": "*",
     "js-yaml": "*",
-    "node-alarmdecoder": "*",
+    "node-alarmdecoder": "tenstartups/node-alarmdecoder#master",
     "node-ssdp": "*",
     "rc": "*",
     "request": "*",
