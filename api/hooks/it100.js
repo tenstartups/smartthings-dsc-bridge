@@ -41,7 +41,7 @@ module.exports = (sails) => {
           var terminatorIndex = buffer.indexOf(msgTerminator)
           while (terminatorIndex !== -1) {
             var msg = buffer.slice(0, terminatorIndex)
-            console.log('Message: ' + msg)
+            console.log('IT-100 Message: ' + msg)
             buffer = buffer.slice(terminatorIndex + msgTerminator.length)
             terminatorIndex = buffer.indexOf(msgTerminator)
           }

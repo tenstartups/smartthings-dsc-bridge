@@ -21,6 +21,7 @@
     "grunt-sync": "*",
     "include-all": "*",
     "js-yaml": "*",
+    "node-alarmdecoder": "*",
     "node-ssdp": "*",
     "rc": "*",
     "request": "*",

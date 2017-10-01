@@ -131,7 +131,7 @@ module.exports = (sails) => {
     },
 
     initialize: (cb) => {
-      sails.after('hook:it100:loaded', async () => {
+      sails.after('hook:alarmdecoder:loaded', async () => {
         await synchronizeDevices()
         return cb()
       })
