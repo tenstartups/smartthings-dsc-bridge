@@ -2,27 +2,24 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    status: function () {
-      return this.isyDevice().getCurrentLightState() ? 'on' : 'off'
+    currentState: function () {
+      return { status: this.state }
     },
 
-    getStatus: function () {
-      return { status: this.status() }
+    setState: function (state) {
+      this.state = state
     },
 
-    refreshStatus: function () {
-      this.sendSmartThingsUpdate()
-      return { command: 'refresh_status' }
+    armStay: function () {
+      sails.hooks.alarmdecoder.sendKeys('\x04\x04\x04')
     },
 
-    turnOn: function () {
-      this.isyDevice().sendLightCommand(true, success => {})
-      return { command: 'turn_on' }
+    armAway: function () {
+      sails.hooks.alarmdecoder.sendKeys('\x05\x05\x05')
     },
 
-    turnOff: function () {
-      this.isyDevice().sendLightCommand(false, success => {})
-      return { command: 'turn_off' }
+    disarm: function (code) {
+      sails.hooks.alarmdecoder.sendKeys(`#${code}`)
     }
   }
 })

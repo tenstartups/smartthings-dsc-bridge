@@ -57,28 +57,18 @@ module.exports = {
 
     type: {
       type: 'string',
-      enum: ['Light', 'DimmableLight', 'Fan', 'Outlet', 'Scene'],
+      enum: ['ContactZone', 'FireZone', 'Keypad', 'MotionZone', 'Panel', 'Partition'],
       required: true
     },
 
-    address: {
+    uid: {
       type: 'string',
       required: true,
       unique: true,
       index: true
     },
 
-    model: {
-      type: 'string',
-      required: false
-    },
-
     name: {
-      type: 'string',
-      required: true
-    },
-
-    description: {
       type: 'string',
       required: true
     },
@@ -97,7 +87,7 @@ module.exports = {
     },
 
     networkId: function () {
-      var key = `isy:${SERVER_SETTINGS.instance_number || '01'}:${this.type}:${this.address}`
+      var key = `isy:${SERVER_SETTINGS.instance_number || '01'}:${this.type}:${this.uid}`
       return crypto.createHash('md5').update(key).digest('hex')
     },
 
@@ -117,18 +107,12 @@ module.exports = {
       return {
         id: this.id,
         type: this.type,
-        address: this.address,
-        model: this.model,
+        uid: this.uid,
         name: this.displayName(),
-        description: this.description,
         network_id: this.networkId(),
         ip_address: this.ssdpAdvertiseIP(),
         ip_port: this.ssdpAdvertisePort()
       }
-    },
-
-    isyDevice: function () {
-      return sails.hooks.isy.connection().getDevice(this.address)
     },
 
     getStatus: function () {

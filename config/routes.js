@@ -54,12 +54,13 @@ module.exports.routes = {
   'post /api/device/:id/token/:token': 'DeviceController.setToken',
   'delete /api/device/:id/token': 'DeviceController.deleteToken',
 
-  // Alarm panel controller actions
-  'get /api/panel/:id/status': 'AlarmPanelController.status',
-
   // Alarm partition controller actions
-  'get /api/partition/:id/status': 'AlarmPartitionController.status',
+  'get /api/partition/:id/status': 'PartitionController.status',
+  'post /api/partition/:id/arm_stay': 'PartitionController.armStay',
+  'post /api/partition/:id/arm_away': 'PartitionController.armAway',
+  'post /api/partition/:id/disarm/:code': 'PartitionController.disarm',
 
   // Alarm zone controller actions
-  'get /api/zone/:id/status': 'ZoneController.status'
+  'get /api/contact_zone/:id/status': 'ContactZoneController.status',
+  'get /api/motion_zone/:id/status': 'MotionZoneController.status'
 }
