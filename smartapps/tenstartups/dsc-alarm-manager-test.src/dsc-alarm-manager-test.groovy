@@ -1,5 +1,5 @@
 /**
-*  ISY Device Manager
+*  DSC Alarm Manager (Test)
 *
 *  Copyright 2016 SmartThings
 *
@@ -14,17 +14,17 @@
 *
 */
 definition(
-    name: "ISY Device Manager",
+    name: "DSC Alarm Manager (Test)",
     namespace: "TenStartups",
     author: "Marc Lennox (marc.lennox@gmail.com)",
-    description: "Integrate SmartThings with an ISY994i home automation controller in order to control and receive events from your ISY lights, dimmers, outlets, fans and scenes.",
+    description: "Integrate SmartThings with a DSC Alarm panel in order to control and receive events from your alarm system.",
     category: "My Apps",
     iconUrl: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
     iconX2Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
     iconX3Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png")
 
 preferences {
-    page(name: "deviceDiscovery", title: "ISY994i Discovery", content: "deviceDiscovery")
+    page(name: "deviceDiscovery", title: "DSC Alarm Discovery", content: "deviceDiscovery")
 }
 
 mappings {
@@ -34,26 +34,22 @@ mappings {
 }
 
 def ssdpUSN() {
-    return "urn:schemas-upnp-org:service:ISYDeviceManager:1"
+    return "urn:schemas-upnp-org:service:DSCDeviceManager:11"
 }
 
 def deviceDiscovery() {
-    def lightDevices = lightChoices()
-    def dimmableLightDevices = dimmableLightChoices()
-    def outletDevices = outletChoices()
-    def fanDevices = fanChoices()
-    def sceneDevices = sceneChoices()
+    def partitionDevices = partitionChoices()
+    def contactZoneDevices = contactZoneChoices()
+    def motionZoneDevices = motionZoneChoices()
 
     ssdpSubscribe()
     ssdpDiscover()
 
-    return dynamicPage(name: "deviceDiscovery", title: "Started ISY device discovery...", nextPage: "", refreshInterval: 5, install: true, uninstall: true) {
-        section("Please wait while we discover your ISY devices. Select the devices you want to control in SmartThings below once they have been discovered.") {
-            input "selectedLights", "enum", required: false, title: "Light devices (${lightDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: lightDevices
-            input "selectedDimmableLights", "enum", required: false, title: "Dimmable light devices (${dimmableLightDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: dimmableLightDevices
-            input "selectedOutlets", "enum", required: false, title: "Outlet devices (${outletDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: outletDevices
-            input "selectedFans", "enum", required: false, title: "Fan devices (${fanDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: fanDevices
-            input "selectedScenes", "enum", required: false, title: "Scene devices (${sceneDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: sceneDevices
+    return dynamicPage(name: "deviceDiscovery", title: "Started DSC Alarm device discovery...", nextPage: "", refreshInterval: 5, install: true, uninstall: true) {
+        section("Please wait while we discover your DSC Alarm devices. Select the devices you want to control in SmartThings below once they have been discovered.") {
+            input "selectedPartitions", "enum", required: false, title: "Partition devices (${partitionDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: partitionDevices
+            input "selectedContactZones", "enum", required: false, title: "Contact zone devices (${contactZoneDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: contactZoneDevices
+            input "selectedMotionZones", "enum", required: false, title: "Motion zone devices (${motionZoneDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: motionZoneDevices
         }
     }
 }
@@ -85,94 +81,58 @@ def initialize() {
 
 def selectedDevices() {
     def selected = []
-    if (selectedLights) {
-        selected += selectedLights
+    if (selectedPartions) {
+        selected += selectedPartions
     }
-    if (selectedDimmableLights) {
-        selected += selectedDimmableLights
+    if (selectedContactZones) {
+        selected += selectedContactZones
     }
-    if (selectedOutlets) {
-        selected += selectedOutlets
-    }
-    if (selectedFans) {
-        selected += selectedFans
-    }
-    if (selectedScenes) {
-        selected += selectedScenes
+    if (selectedMotionZones) {
+        selected += selectedMotionZones
     }
     selected
 }
 
-def discoveredLightDevices() {
-    if (!state.discoveredLightDevices) {
-        state.discoveredLightDevices = [:]
+def discoveredPartitionDevices() {
+    if (!state.discoveredPartitionDevices) {
+        state.discoveredPartitionDevices = [:]
     }
-    state.discoveredLightDevices
+    state.discoveredPartitionDevices
 }
 
-def discoveredDimmableLightDevices() {
-    if (!state.discoveredDimmableLightDevices) {
-        state.discoveredDimmableLightDevices = [:]
+def discoveredContactZoneDevices() {
+    if (!state.discoveredContactZoneDevices) {
+        state.discoveredContactZoneDevices = [:]
     }
-    state.discoveredDimmableLightDevices
+    state.discoveredContactZoneDevices
 }
 
-def discoveredOutletDevices() {
-    if (!state.discoveredOutletDevices) {
-        state.discoveredOutletDevices = [:]
+def discoveredMotionZoneDevices() {
+    if (!state.discoveredMotionZoneDevices) {
+        state.discoveredMotionZoneDevices = [:]
     }
-    state.discoveredOutletDevices
+    state.discoveredMotionZoneDevices
 }
 
-def discoveredFanDevices() {
-    if (!state.discoveredFanDevices) {
-        state.discoveredFanDevices = [:]
-    }
-    state.discoveredFanDevices
-}
-
-def discoveredSceneDevices() {
-    if (!state.discoveredSceneDevices) {
-        state.discoveredSceneDevices = [:]
-    }
-    state.discoveredSceneDevices
-}
-
-Map lightChoices() {
+Map partitionChoices() {
     def map = [:]
-    discoveredLightDevices().sort({ it.value.label }).each {
+    discoveredPartitionDevices().sort({ it.value.label }).each {
         map[it.value.dni] = it.value.label
     }
     map
 }
 
-Map dimmableLightChoices() {
+Map contactZoneChoices() {
     def map = [:]
-    discoveredDimmableLightDevices().sort({ it.value.label }).each {
+    discoveredContactZoneDevices().sort({ it.value.label }).each {
         map[it.value.dni] = it.value.label
     }
     map
 }
 
-Map outletChoices() {
+Map motionZoneChoices() {
     def map = [:]
-    discoveredOutletDevices().sort({ it.value.label }).each {
-        map[it.value.dni] = it.value.label
-    }
-    map
-}
-
-Map fanChoices() {
-    def map = [:]
-    discoveredFanDevices().sort({ it.value.label }).each {
-        map[it.value.dni] = it.value.label
-    }
-    map
-}
-
-Map sceneChoices() {
-    def map = [:]
-    discoveredSceneDevices().sort({ it.value.label }).each {
+    discoveredMotionZoneDevices().sort({ it.value.label }).each {
         map[it.value.dni] = it.value.label
     }
     map
@@ -205,11 +165,9 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
 
     def discoveredDevices = hubResponse.json?.device
 
-    def discoveredLights = [:]
-    def discoveredDimmableLights = [:]
-    def discoveredOutlets = [:]
-    def discoveredFans = [:]
-    def discoveredScenes = [:]
+    def discoveredPartitions = [:]
+    def discoveredContactZones = [:]
+    def discoveredMotionZones = [:]
 
     discoveredDevices.each { device ->
         def deviceAttrs = [
@@ -222,25 +180,17 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
             ipPort: device.ip_port,
         ]
         switch (device.type) {
-            case 'Light':
-            deviceAttrs << [ name: 'ISY Light Device', handler: 'ISY Light' ]
-            discoveredLights[device.network_id] = deviceAttrs
+            case 'Partition':
+            deviceAttrs << [ name: 'DSC Alarm Partition', handler: 'DSC Alarm Partition' ]
+            discoveredPartitions[device.network_id] = deviceAttrs
             break
-            case 'DimmableLight':
-            deviceAttrs << [ name: 'ISY Dimmable Light Device', handler: 'ISY Dimmable Light' ]
-            discoveredDimmableLights[device.network_id] = deviceAttrs
+            case 'ContactZone':
+            deviceAttrs << [ name: 'DSC Alarm Contact Zone', handler: 'DSC Alarm Contact Zone' ]
+            discoveredContactZones[device.network_id] = deviceAttrs
             break
-            case 'Outlet':
-            deviceAttrs << [ name: 'ISY Outlet Device', handler: 'ISY Outlet' ]
-            discoveredOutlets[device.network_id] = deviceAttrs
-            break
-            case 'Fan':
-            deviceAttrs << [ name: 'ISY Fan Device', handler: 'ISY Fan' ]
-            discoveredFans[device.network_id] = deviceAttrs
-            break
-            case 'Scene':
-            deviceAttrs << [ name: 'ISY Scene Device', handler: 'ISY Scene' ]
-            discoveredScenes[device.network_id] = deviceAttrs
+            case 'MotionZone':
+            deviceAttrs << [ name: 'DSC Alarm Motion Zone', handler: 'DSC Alarm Motion Zone' ]
+            discoveredMotionZones[device.network_id] = deviceAttrs
             break
         }
         def childDevice = getChildDevice(deviceAttrs.dni)
@@ -250,11 +200,9 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
     }
 
     // Reset state maps
-    state.discoveredLightDevices = discoveredLights
-    state.discoveredDimmableLightDevices = discoveredDimmableLights
-    state.discoveredOutletDevices = discoveredOutlets
-    state.discoveredFanDevices = discoveredFans
-    state.discoveredSceneDevices = discoveredScenes
+    state.discoveredPartitionDevices = discoveredPartitions
+    state.discoveredContactZoneDevices = discoveredContactZones
+    state.discoveredMotionZoneDevices = discoveredMotionZones
 }
 
 void refreshChildDevice(childDevice, deviceAttrs) {
@@ -285,11 +233,9 @@ void deleteChildDeviceToken(childDevice) {
 }
 
 def createSelectedDevices(devices) {
-    def selectedDevices = selectedLights.collect { dni -> discoveredLightDevices()[dni] } +
-        selectedDimmableLights.collect { dni -> discoveredDimmableLightDevices()[dni] } +
-            selectedOutlets.collect { dni -> discoveredOutletDevices()[dni] } +
-                selectedFans.collect { dni -> discoveredFanDevices()[dni] } +
-                    selectedScenes.collect { dni -> discoveredSceneDevices()[dni] }
+    def selectedDevices = selectedPartitions.collect { dni -> discoveredPartitionDevices()[dni] } +
+        selectedContactZones.collect { dni -> discoveredContactZoneDevices()[dni] } +
+            selectedMotionZones.collect { dni -> discoveredMotionZoneDevices()[dni] }
 
     selectedDevices.each { device ->
         def childDevice = getChildDevice(device.dni)

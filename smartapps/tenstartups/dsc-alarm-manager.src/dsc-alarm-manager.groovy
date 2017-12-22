@@ -1,5 +1,5 @@
 /**
-*  DSC Alarm Device Manager (Test)
+*  DSC Alarm Manager
 *
 *  Copyright 2016 SmartThings
 *
@@ -14,7 +14,7 @@
 *
 */
 definition(
-    name: "DSC Alarm Device Manager (Test)",
+    name: "DSC Alarm Manager",
     namespace: "TenStartups",
     author: "Marc Lennox (marc.lennox@gmail.com)",
     description: "Integrate SmartThings with a DSC Alarm panel in order to control and receive events from your alarm system.",
@@ -34,7 +34,7 @@ mappings {
 }
 
 def ssdpUSN() {
-    return "urn:schemas-upnp-org:service:DSCDeviceManager:11"
+    return "urn:schemas-upnp-org:service:DSCDeviceManager:1"
 }
 
 def deviceDiscovery() {
