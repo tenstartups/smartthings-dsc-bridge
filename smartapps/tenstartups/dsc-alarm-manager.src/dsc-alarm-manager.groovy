@@ -19,9 +19,9 @@ definition(
     author: "Marc Lennox (marc.lennox@gmail.com)",
     description: "Integrate SmartThings with a DSC Alarm panel in order to control and receive events from your alarm system.",
     category: "My Apps",
-    iconUrl: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
-    iconX2Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
-    iconX3Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png")
+    iconUrl: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
+    iconX2Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
+    iconX3Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png")
 
 preferences {
     page(name: "deviceDiscovery", title: "DSC Alarm Discovery", content: "deviceDiscovery")
