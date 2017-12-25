@@ -62,5 +62,7 @@ module.exports.routes = {
 
   // Alarm zone controller actions
   'get /api/contact_zone/:id/status': 'ContactZoneController.status',
-  'get /api/motion_zone/:id/status': 'MotionZoneController.status'
+  'post /api/contact_zone/:id/status': 'ContactZoneController.status',
+  'get /api/motion_zone/:id/status': 'MotionZoneController.status',
+  'post /api/motion_zone/:id/status': 'MotionZoneController.status'
 }

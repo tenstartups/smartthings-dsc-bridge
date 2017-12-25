@@ -34,18 +34,10 @@ metadata {
                 attributeState "turningOn", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor: "#79b821", nextState: "turningOff"
                 attributeState "turningOff", label:'${name}', action: "switch.on", icon: "st.Lighting.light13", backgroundColor: "#ffffff", nextState: "turningOn"
             }
-
-            tileAttribute ("device.level", key: "SLIDER_CONTROL") {
-                attributeState "level", action: "switch level.setLevel"
-            }
         }
 
         standardTile("refresh", "device.switch", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
             state "default", label:'', action: "refresh.refresh", icon: "st.secondary.refresh"
-        }
-
-        valueTile("level", "device.level", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "level", label:'${currentValue} %', unit: "%", backgroundColor: "#ffffff"
         }
 
         main(["switch"])
@@ -74,7 +66,7 @@ def off() {
 def refresh()
 {
     log.debug "Refreshing light status..."
-    sendCommand("refresh")
+    sendCommand("status")
 }
 
 def sendCommand(String commandPath) {
