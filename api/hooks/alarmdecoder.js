@@ -27,11 +27,10 @@ function processZoneEvent (data) {
   Device.findTyped({ type: type, uid: data.zone.name })
   .then(device => {
     if (data.state === 0) {
-      device.setState('inactive')
+      device.updateState('inactive')
     } else if (data.state === 1) {
-      device.setState('active')
+      device.updateState('active')
     }
-    device.sendSmartThingsUpdate()
   })
   .catch(err => {
     throw err

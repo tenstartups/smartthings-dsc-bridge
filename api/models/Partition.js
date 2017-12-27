@@ -6,10 +6,6 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       return { status: this.state }
     },
 
-    setState: function (state) {
-      this.state = state
-    },
-
     armStay: function () {
       sails.hooks.alarmdecoder.sendKeys('\x04\x04\x04')
     },

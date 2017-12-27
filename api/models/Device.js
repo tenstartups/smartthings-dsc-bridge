@@ -86,6 +86,11 @@ module.exports = {
       type: 'array'
     },
 
+    state: {
+      type: 'string',
+      required: false
+    },
+
     networkId: function () {
       var key = `isy:${SERVER_SETTINGS.instance_number || '01'}:${this.type}:${this.uid}`
       return crypto.createHash('md5').update(key).digest('hex')
@@ -113,6 +118,15 @@ module.exports = {
         ip_address: this.ssdpAdvertiseIP(),
         ip_port: this.ssdpAdvertisePort()
       }
+    },
+
+    updateState: function (state) {
+      this.state = state
+      this.save(err => {
+        if (err) {
+          return res.serverError(err)
+        }
+      })
     },
 
     getStatus: function () {
