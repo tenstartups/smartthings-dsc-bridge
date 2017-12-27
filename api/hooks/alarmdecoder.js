@@ -24,13 +24,13 @@ function processZoneEvent (data) {
   } else {
     return
   }
-  if (data.state === 0) {
-    state = false
-  } else if (data.state === 1) {
-    state = true
-  }
   Device.findTyped({ type: type, uid: data.zone.name })
   .then(device => {
+    if (data.state === 0) {
+      device.setState('inactive')
+    } else if (data.state === 1) {
+      device.setState('active')
+    }
     device.sendSmartThingsUpdate()
   })
   .catch(err => {
