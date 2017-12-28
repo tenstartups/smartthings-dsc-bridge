@@ -130,9 +130,7 @@ module.exports = {
     },
 
     getStatus: function () {
-      return new Promise((resolve, reject) => {
-        resolve(Object.assign({ command: 'status' }, this.currentState()))
-      })
+      return Object.assign({ command: 'status' }, this.currentState())
     },
 
     loadSmartThingsAppEndpoints: function () {
@@ -158,7 +156,7 @@ module.exports = {
     },
 
     sendSmartThingsUpdate: function () {
-      var body = { device: this.toJSON(), data: this.currentState() }
+      var body = { device: this.toJSON(), data: this.getStatus() }
 
       if (!this.smartThingsToken || !this.smartThingsAppCallbackURIs) {
         return null
