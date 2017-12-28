@@ -18,7 +18,7 @@ definition(
     namespace: "TenStartups",
     author: "Marc Lennox (marc.lennox@gmail.com)",
     description: "Integrate SmartThings with a DSC Alarm panel in order to control and receive events from your alarm system.",
-    category: "My Apps",
+    category: "Safety & Security",
     iconUrl: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
     iconX2Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
     iconX3Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png")
@@ -34,7 +34,7 @@ mappings {
 }
 
 def ssdpUSN() {
-    return "urn:schemas-upnp-org:service:DSCDeviceManager:11"
+    return "urn:schemas-upnp-org:service:DSCAlarmManager:11"
 }
 
 def deviceDiscovery() {
@@ -216,7 +216,7 @@ void updateChildDeviceToken(childDevice) {
     sendHubCommand(
         new physicalgraph.device.HubAction(
             method: "POST",
-            path: "/api/device/${childDevice.getDataValue("externalId")}/token/${state.deviceAccessToken}",
+            path: "/api/device/${childDevice.getDataValue("externalId")}/token/${state.accessToken}",
             headers: [ HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}" ]
         )
     )
