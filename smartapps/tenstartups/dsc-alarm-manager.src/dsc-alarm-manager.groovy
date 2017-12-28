@@ -216,7 +216,7 @@ void updateChildDeviceToken(childDevice) {
     sendHubCommand(
         new physicalgraph.device.HubAction(
             method: "POST",
-            path: "/api/device/${childDevice.getDataValue("externalId")}/token/${state.deviceAccessToken}",
+            path: "/api/device/${childDevice.getDataValue("externalId")}/token/${state.accessToken}",
             headers: [ HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}" ]
         )
     )
