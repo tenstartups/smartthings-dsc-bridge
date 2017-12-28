@@ -30,6 +30,7 @@ function processZoneEvent (data) {
       }
     } else if (data.zone.type === 'fire') {
     }
+    device.sendSmartThingsUpdate()
   })
   .catch(err => {
     throw err
