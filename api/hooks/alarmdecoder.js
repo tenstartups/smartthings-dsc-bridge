@@ -1,3 +1,4 @@
+var camelCase = require('uppercamelcase')
 const AlarmDecoder = require('node-alarmdecoder')
 const QUEUE = require('queue')
 const ALARMDECODER_SETTINGS = require('js-yaml')
@@ -12,24 +13,22 @@ const ZONE_SETTINGS = require('js-yaml')
 function processZoneEvent (data) {
   console.log(`[AlarmDecoder] Processing zone event for ${data.zone.name}`)
   console.log(data)
-  var type
-  var state
-  if (data.zone.type === 'contact') {
-    type = 'ContactZone'
-  } else if (data.zone.type === 'motion') {
-    type = 'MotionZone'
-  } else if (data.zone.type === 'fire') {
-    type = 'FireZone'
-    return
-  } else {
-    return
-  }
+  var type = `${camelCase(data.zone.type)}Zone`
   Device.findTyped({ type: type, uid: data.zone.name })
   .then(device => {
-    if (data.state === 0) {
-      device.updateState('inactive')
-    } else if (data.state === 1) {
-      device.updateState('active')
+    if (data.zone.type === 'contact') {
+      if (data.state === 0) {
+        device.updateState('closed')
+      } else if (data.state === 1) {
+        device.updateState('open')
+      }
+    } else if (data.zone.type === 'motion') {
+      if (data.state === 0) {
+        device.updateState('inactive')
+      } else if (data.state === 1) {
+        device.updateState('active')
+      }
+    } else if (data.zone.type === 'fire') {
     }
   })
   .catch(err => {

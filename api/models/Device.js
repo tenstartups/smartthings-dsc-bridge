@@ -1,5 +1,4 @@
-var camelCase = require('uppercamelcase')
-var crypto = require('crypto');
+var crypto = require('crypto')
 var request = require('request-promise-native')
 const uuidv4 = require('uuid/v4')
 
