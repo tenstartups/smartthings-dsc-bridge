@@ -73,6 +73,6 @@ def processStatusUpdate(data) {
 log.debug(data)
     if (data.status != null) {
         log.debug "Motion zone status is ${data.status.toUpperCase()}"
-        sendEvent(name: "switch", value: data.status)
+        sendEvent(name: "motion", value: data.status)
     }
 }

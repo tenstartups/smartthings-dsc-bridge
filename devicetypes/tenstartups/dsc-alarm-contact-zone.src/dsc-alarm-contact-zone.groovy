@@ -73,6 +73,6 @@ def sendCommandResponseHandler(physicalgraph.device.HubResponse hubResponse) {
 def processStatusUpdate(data) {
     if (data.status != null) {
         log.debug "Contact zone status is ${data.status.toUpperCase()}"
-        sendEvent(name: "switch", value: data.status)
+        sendEvent(name: "contact", value: data.status)
     }
 }
