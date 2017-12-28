@@ -27,12 +27,12 @@ metadata {
 
     // UI tile definitions
     tiles(scale:2) {
-        standardTile("sensor", "device.motion", width: 2, height: 2, canChangeIcon: true) {
-            state "inactive", label: '${name}', icon: "st.motion.motion.inactive", backgroundColor: "#79b821"
-            state "active", label: '${name}', icon: "st.motion.motion.active", backgroundColor: "#ffffff"
+        standardTile("sensor", "device.motion", width: 6, height:4, canChangeIcon: true) {
+            state "inactive", label: 'No Motion', icon: "st.motion.motion.inactive", backgroundColor: "#ffffff"
+            state "active", label: 'Motion', icon: "st.motion.motion.active", backgroundColor: "#79b821"
         }
-        standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat") {
-            state "default", label:'Refresh', action:"device.refresh", icon: "st.secondary.refresh-icon"
+        standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
+            state "default", label: "", action: "refresh.refresh", icon: "st.secondary.refresh"
         }
         main(["sensor"])
         details(["sensor", "refresh"])
@@ -66,11 +66,11 @@ def sendCommand(String commandPath) {
 }
 
 def sendCommandResponseHandler(physicalgraph.device.HubResponse hubResponse) {
-    log.debug("Received command response")
     processStatusUpdate(hubResponse.json?.result)
 }
 
 def processStatusUpdate(data) {
+log.debug(data)
     if (data.status != null) {
         log.debug "Motion zone status is ${data.status.toUpperCase()}"
         sendEvent(name: "switch", value: data.status)

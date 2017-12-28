@@ -27,11 +27,11 @@ metadata {
 
     // UI tile definitions
     tiles(scale:2) {
-        standardTile("sensor", "device.contact", width: 2, height: 2, canChangeIcon: true) {
-            state "closed", label: '${name}', icon: "st.contact.contact.closed", backgroundColor: "#79b821"
-            state "open", label: '${name}', icon: "st.contact.contact.open", backgroundColor: "#ffffff"
+        standardTile("sensor", "device.motion", width: 6, height:4, canChangeIcon: true) {
+            state "closed", label: '${name}', icon: "st.contact.contact.closed", backgroundColor: "#ffffff"
+            state "open", label: '${name}', icon: "st.contact.contact.open", backgroundColor: "#79b821"
         }
-        standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat") {
+        standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
             state "default", label:'Refresh', action:"device.refresh", icon: "st.secondary.refresh-icon"
         }
         main(["sensor"])
