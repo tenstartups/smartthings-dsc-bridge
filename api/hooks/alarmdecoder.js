@@ -10,6 +10,26 @@ const ZONE_SETTINGS = require('js-yaml')
                     .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
                     .zones || {}
 
+function processKeypadMessage (data) {
+  console.log(`[AlarmDecoder] Processing alarm event`)
+  var status
+  if (data.bits['Ready']) {
+    status = 'disarmed'
+  } else if (data.bits['Armed Home']) {
+    status = 'armed_stay'
+  } else if (data.bits['Armed Away']) {
+    status = 'armed_away'
+  }
+  Device.findTyped({ type: 'Partition', uid: 'partition_1' })
+  .then(device => {
+    device.updateState(status)
+    device.sendSmartThingsUpdate()
+  })
+  .catch(err => {
+    throw err
+  })
+}
+
 function processZoneEvent (data) {
   console.log(`[AlarmDecoder] Processing zone event for ${data.zone.name}`)
   console.log(data)
@@ -45,14 +65,6 @@ module.exports = (sails) => {
   return {
     sendKeys: (keys) => {
       connection.client.write(keys)
-    },
-
-    status: () => {
-      return {
-        ready: lastKeypadMessage.bits['Ready'],
-        armed_stay: lastKeypadMessage.bits['Armed Home'],
-        armed_away: lastKeypadMessage.bits['Armed Away']
-      }
     },
 
     configure: () => {
@@ -113,7 +125,11 @@ module.exports = (sails) => {
         })
 
         connection.events.on('keypadMessage', (data) => {
-          lastKeypadMessage = data
+          let str = JSON.stringify(data)
+          if (lastKeypadMessage !== str) {
+            lastKeypadMessage = str
+            processKeypadMessage(data)
+          }
         })
       })
     }
