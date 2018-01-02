@@ -11,7 +11,8 @@ const ZONE_SETTINGS = require('js-yaml')
                     .zones || {}
 
 function processKeypadMessage (data) {
-  console.log(`[AlarmDecoder] Processing alarm event`)
+  console.log('[AlarmDecoder] Processing alarm event')
+  console.log(data)
   var status = 'unknown'
   if (data.bits['Ready']) {
     status = 'disarmed'
@@ -20,7 +21,7 @@ function processKeypadMessage (data) {
   } else if (data.bits['Armed Away']) {
     status = 'armed_away'
   } else {
-    console.log(`[AlarmDecoder] Alarm status unknown`)
+    console.log('[AlarmDecoder] Alarm status unknown')
     return
   }
   console.log(`[AlarmDecoder] Alarm status is ${status}`)
