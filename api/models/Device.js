@@ -91,7 +91,7 @@ module.exports = {
     },
 
     networkId: function () {
-      var key = `isy:${SERVER_SETTINGS.instance_number || '01'}:${this.type}:${this.uid}`
+      var key = `dsc:${SERVER_SETTINGS.instance_number || '01'}:${this.type}:${this.uid}`
       return crypto.createHash('md5').update(key).digest('hex')
     },
 
