@@ -18,7 +18,7 @@ definition(
     namespace: "TenStartups",
     author: "Marc Lennox (marc.lennox@gmail.com)",
     description: "Integrate SmartThings with a DSC Alarm panel in order to control and receive events from your alarm system.",
-    category: "Safety & Security",
+    category: "My Apps",
     iconUrl: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
     iconX2Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
     iconX3Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png")
@@ -71,6 +71,8 @@ def uninstalled() {
 }
 
 def initialize() {
+    subscribe(location, "alarmSystemStatus", alarmStatusHandler)
+
     unsubscribe()
     unschedule()
     ssdpSubscribe()
@@ -79,10 +81,17 @@ def initialize() {
     runEvery5Minutes("ssdpDiscover")
 }
 
+def alarmStatusHandler(evt) {
+    log.debug "Alarm status changed to: ${evt.value}"
+//sendLocationEvent(name: "alarmSystemStatus", value: "away")
+//sendLocationEvent(name: "alarmSystemStatus", value: "stay")
+//sendLocationEvent(name: "alarmSystemStatus", value: "off")
+}
+
 def selectedDevices() {
     def selected = []
-    if (selectedPartions) {
-        selected += selectedPartions
+    if (selectedPartitions) {
+        selected += selectedPartitions
     }
     if (selectedContactZones) {
         selected += selectedContactZones
@@ -175,7 +184,6 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
             dni: device.network_id,
             label: device.name,
             externalId: device.id,
-            isyAddress: device.address,
             ipAddress: device.ip_address,
             ipPort: device.ip_port,
         ]
@@ -254,6 +262,7 @@ def createSelectedDevices(devices) {
                 ]
             )
         }
+            log.debug(childDevice)
         updateChildDeviceToken(childDevice)
         childDevice.refresh()
     }
@@ -302,12 +311,17 @@ def processUpdate() {
 
     def childDevice = getChildDevice(request.JSON.device.network_id)
 
-    if (childDevice) {
-        childDevice.processStatusUpdate(request.JSON.data)
-        return [ status: 'OK', data: request.JSON.data ]
+	if (request.JSON.data != null) {
+        if (childDevice) {
+            childDevice.processStatusUpdate(request.JSON.data)
+            return [ status: 'OK', data: request.JSON.data ]
+        } else {
+            log.debug("Device ${request.JSON.device.network_id} not found, deleting remote token")
+            return httpError(404, "Device with network ID ${request.JSON.device.network_id} does not exist")
+        }
     } else {
-        log.debug("Device ${request.JSON.device.network_id} not found, deleting remote token")
-        return httpError(404, "Device with network ID ${request.JSON.device.network_id} does not exist")
+        log.debug("Update data empty")
+        return httpError(404, "Update data empty")
     }
 }
 
