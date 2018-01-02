@@ -7,15 +7,21 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     armStay: function () {
-      sails.hooks.alarmdecoder.sendKeys('\x04\x04\x04')
+      if (sails.hooks.alarmdecoder.currentStatus() !== 'armed_stay') {
+        sails.hooks.alarmdecoder.sendKeys('\x04\x04\x04')
+      }
     },
 
     armAway: function () {
-      sails.hooks.alarmdecoder.sendKeys('\x05\x05\x05')
+      if (sails.hooks.alarmdecoder.currentStatus() !== 'armed_away') {
+        sails.hooks.alarmdecoder.sendKeys('\x05\x05\x05')
+      }
     },
 
     disarm: function (code) {
-      sails.hooks.alarmdecoder.sendKeys(`#${code}`)
+      if (sails.hooks.alarmdecoder.currentStatus() !== 'disarmed') {
+        sails.hooks.alarmdecoder.sendKeys(`#${code}`)
+      }
     }
   }
 })

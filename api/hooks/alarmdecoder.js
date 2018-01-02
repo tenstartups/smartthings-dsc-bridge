@@ -12,14 +12,18 @@ const ZONE_SETTINGS = require('js-yaml')
 
 function processKeypadMessage (data) {
   console.log(`[AlarmDecoder] Processing alarm event`)
-  var status
+  var status = 'unknown'
   if (data.bits['Ready']) {
     status = 'disarmed'
   } else if (data.bits['Armed Home']) {
     status = 'armed_stay'
   } else if (data.bits['Armed Away']) {
     status = 'armed_away'
+  } else {
+    console.log(`[AlarmDecoder] Alarm status unknown`)
+    return
   }
+  console.log(`[AlarmDecoder] Alarm status is ${status}`)
   Device.findTyped({ type: 'Partition', uid: 'partition_1' })
   .then(device => {
     device.updateState(status)
@@ -65,6 +69,18 @@ module.exports = (sails) => {
   return {
     sendKeys: (keys) => {
       connection.client.write(keys)
+    },
+
+    currentStatus: () => {
+      if (lastKeypadMessage.bits['Ready']) {
+        return 'disarmed'
+      } else if (lastKeypadMessage.bits['Armed Home']) {
+        return 'armed_stay'
+      } else if (lastKeypadMessage.bits['Armed Away']) {
+        return 'armed_away'
+      } else {
+        return 'unknown'
+      }
     },
 
     configure: () => {
@@ -125,9 +141,8 @@ module.exports = (sails) => {
         })
 
         connection.events.on('keypadMessage', (data) => {
-          let str = JSON.stringify(data)
-          if (lastKeypadMessage !== str) {
-            lastKeypadMessage = str
+          if (JSON.stringify(lastKeypadMessage) !== JSON.stringify(data)) {
+            lastKeypadMessage = data
             processKeypadMessage(data)
           }
         })
