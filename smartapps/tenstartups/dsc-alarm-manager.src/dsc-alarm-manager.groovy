@@ -71,18 +71,29 @@ def uninstalled() {
 }
 
 def initialize() {
-    subscribe(location, "alarmSystemStatus", alarmStatusHandler)
-
     unsubscribe()
     unschedule()
     ssdpSubscribe()
     createSelectedDevices()
     deleteUnselectedDevices()
     runEvery5Minutes("ssdpDiscover")
+
+    subscribe(location, "alarmSystemStatus", alarmStatusHandler)
 }
 
 def alarmStatusHandler(evt) {
-    log.debug "Alarm status changed to: ${evt.value}"
+    log.debug "Alarm system status is ${evt.value}"
+    def partitionDevice = getChildDevices().find { it.getDataValue("externalUid") == 'partition_1' }
+    if (partitionDevice == null) {
+    	return
+    }
+    if (evt.value == 'off') {
+    	partitionDevice.disarm()
+    } else if (evt.value == 'stay') {
+    	partitionDevice.armStay()
+    } else if (evt.value == 'away') {
+    	partitionDevice.armAway()
+    }
 //sendLocationEvent(name: "alarmSystemStatus", value: "away")
 //sendLocationEvent(name: "alarmSystemStatus", value: "stay")
 //sendLocationEvent(name: "alarmSystemStatus", value: "off")
@@ -184,6 +195,7 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
             dni: device.network_id,
             label: device.name,
             externalId: device.id,
+            externalUid: device.uid,
             ipAddress: device.ip_address,
             ipPort: device.ip_port,
         ]
@@ -216,6 +228,7 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
 void refreshChildDevice(childDevice, deviceAttrs) {
     syncDeviceNameAndLabel(childDevice, deviceAttrs.name, deviceAttrs.label)
     syncDeviceDataValue(childDevice, "externalId", deviceAttrs.externalId)
+    syncDeviceDataValue(childDevice, "externalUid", deviceAttrs.externalUid)
     syncDeviceDataValue(childDevice, "ipAddress", deviceAttrs.ipAddress)
     syncDeviceDataValue(childDevice, "ipPort", deviceAttrs.ipPort)
 }
@@ -255,6 +268,7 @@ def createSelectedDevices(devices) {
                     "label": device.label,
                     "data": [
                         "externalId": device.externalId,
+                        "externalUid": device.uid,
                         "ipAddress": device.ipAddress,
                         "ipPort": device.ipPort,
                     ],
@@ -262,7 +276,6 @@ def createSelectedDevices(devices) {
                 ]
             )
         }
-            log.debug(childDevice)
         updateChildDeviceToken(childDevice)
         childDevice.refresh()
     }
@@ -294,7 +307,7 @@ def syncDeviceNameAndLabel(device, name, label) {
 def syncDeviceDataValue(device, name, value) {
     if (value && device.getDataValue(name) != value) {
         log.debug("Changing data value '${name}' name from '${device.getDataValue(name)}' to '${value}'")
-        device.setDataValue(name, value)
+        device.updateDataValue(name, value)
     }
 }
 
