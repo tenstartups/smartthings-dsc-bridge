@@ -32,7 +32,7 @@ metadata {
         command "armAway"
         command "panic"
 
-        attribute "partitionState", "enum", ["disarmed", "disarming", "armed_stay", "armed_away", "arming"]
+        attribute "partitionState", "enum", ["disarmed", "in_exit_delay", "armed_stay", "armed_away", "in_entry_delay", "alarming"]
     }
 
     simulator {
@@ -43,8 +43,10 @@ metadata {
         multiAttributeTile(name: "status", type: "generic", width: 6, height: 4) {
             tileAttribute("device.partitionState", key: "PRIMARY_CONTROL") {
                 attributeState "disarmed", label: 'Disarmed', icon: "st.security.alarm.off", backgroundColor: "#79b821", defaultState: true
-                attributeState "armed_away", label: 'Armed (Away)', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
+                attributeState "in_exit_delay", label: 'Exit Delay', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
                 attributeState "armed_stay", label: 'Armed (Stay)', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
+                attributeState "armed_away", label: 'Armed (Away)', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
+                attributeState "in_entry_delay", label: 'Entry Delay', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
                 attributeState "alarming", label: 'Alarming!', icon: "st.home.home2", backgroundColor: "#ff4000"
                 attributeState "fire", label: 'Fire!', icon: "st.contact.contact.closed", backgroundColor: "#ff0000"
             }
@@ -57,15 +59,15 @@ metadata {
         }
 
         standardTile("armStay", "device.partitionState", inactiveLabel: false, width: 2, height: 2) {
-            state "default", label: "ARM (STAY)", action: "armStay", icon: "st.security.alarm.on", backgroundColor: "#ffffff", nextState: "arming_stay"
-            state "armed_stay", label: "ARMED (STAY)", action: "", icon: "st.security.alarm.on", backgroundColor: "#79b821", nextState: "arming_stay"
-            state "arming_stay", label: "ARMING (STAY)", action: "armStay", icon: "st.security.alarm.on", backgroundColor: "#2179b8"
+            state "default", label: "STAY", action: "armStay", icon: "st.security.alarm.on", backgroundColor: "#ffffff", nextState: "arming_stay"
+            state "armed_stay", label: "STAY", action: "", icon: "st.security.alarm.on", backgroundColor: "#ffa81e", nextState: "arming_stay"
+            state "arming_stay", label: "ARMING", action: "armStay", icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
         }
 
         standardTile("armAway", "device.partitionState", inactiveLabel: false, width: 2, height: 2) {
-            state "default", label: "ARM (AWAY)", action: "armAway", icon: "st.security.alarm.on", backgroundColor: "#ffffff", nextState: "arming_away"
-            state "armed_away", label: "ARMED (AWAY)", action: "", icon: "st.security.alarm.on", backgroundColor: "#79b821", nextState: "arming_away"
-            state "arming_away", label: "ARMING (AWAY)", action: "armAway", icon: "st.security.alarm.on", backgroundColor: "#2179b8"
+            state "default", label: "AWAY", action: "armAway", icon: "st.security.alarm.on", backgroundColor: "#ffffff", nextState: "arming_away"
+            state "armed_away", label: "AWAY", action: "", icon: "st.security.alarm.on", backgroundColor: "#ffa81e", nextState: "arming_away"
+            state "arming_away", label: "ARMING", action: "armAway", icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
         }
 
         standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
