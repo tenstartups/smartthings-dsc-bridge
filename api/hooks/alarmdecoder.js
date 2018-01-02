@@ -10,17 +10,27 @@ const ZONE_SETTINGS = require('js-yaml')
                     .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
                     .zones || {}
 
+function getStatusFromKeypadMessage(data) {
+  if (data.message === 'Exit Delay In Progress') {
+    return 'in_exit_delay'
+  } else if (data.message === 'Entry is Active Disarm System') {
+    return 'in_entry_delay'
+  } else if (data.bits['Ready']) {
+    return 'disarmed'
+  } else if (data.bits['Armed Home']) {
+    return 'armed_stay'
+  } else if (data.bits['Armed Away']) {
+    return 'armed_away'
+  } else {
+    return null
+  }
+}
+
 function processKeypadMessage (data) {
   console.log('[AlarmDecoder] Processing alarm event')
   console.log(data)
-  var status = 'unknown'
-  if (data.bits['Ready']) {
-    status = 'disarmed'
-  } else if (data.bits['Armed Home']) {
-    status = 'armed_stay'
-  } else if (data.bits['Armed Away']) {
-    status = 'armed_away'
-  } else {
+  var status = getStatusFromKeypadMessage(data)
+  if (status == null) {
     console.log('[AlarmDecoder] Alarm status unknown')
     return
   }
@@ -73,15 +83,11 @@ module.exports = (sails) => {
     },
 
     currentStatus: () => {
-      if (lastKeypadMessage.bits['Ready']) {
-        return 'disarmed'
-      } else if (lastKeypadMessage.bits['Armed Home']) {
-        return 'armed_stay'
-      } else if (lastKeypadMessage.bits['Armed Away']) {
-        return 'armed_away'
-      } else {
+      var status = getStatusFromKeypadMessage(lastKeypadMessage)
+      if (status == null) {
         return 'unknown'
       }
+      return status
     },
 
     configure: () => {
