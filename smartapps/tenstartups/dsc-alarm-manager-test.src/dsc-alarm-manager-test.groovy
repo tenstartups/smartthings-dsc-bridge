@@ -19,9 +19,9 @@ definition(
     author: "Marc Lennox (marc.lennox@gmail.com)",
     description: "Integrate SmartThings with a DSC Alarm panel in order to control and receive events from your alarm system.",
     category: "My Apps",
-    iconUrl: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
-    iconX2Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png",
-    iconX3Url: "https://d30y9cdsu7xlg0.cloudfront.net/png/7005-200.png")
+    iconUrl: "http://luckyscontractors.com/photo/mwsecurityproscom/home-security-professionals.jpg",
+    iconX2Url: "http://luckyscontractors.com/photo/mwsecurityproscom/home-security-professionals.jpg",
+    iconX3Url: "http://luckyscontractors.com/photo/mwsecurityproscom/home-security-professionals.jpg")
 
 preferences {
     page(name: "deviceDiscovery", title: "DSC Alarm Discovery", content: "deviceDiscovery")
@@ -47,6 +47,7 @@ def deviceDiscovery() {
 
     return dynamicPage(name: "deviceDiscovery", title: "Started DSC Alarm device discovery...", nextPage: "", refreshInterval: 5, install: true, uninstall: true) {
         section("Please wait while we discover your DSC Alarm devices. Select the devices you want to control in SmartThings below once they have been discovered.") {
+		    input("userCode", "password", title: "Alarm user code", description: "Alarm keypad user code", required: true)
             input "selectedPartitions", "enum", required: false, title: "Partition devices (${partitionDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: partitionDevices
             input "selectedContactZones", "enum", required: false, title: "Contact zone devices (${contactZoneDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: contactZoneDevices
             input "selectedMotionZones", "enum", required: false, title: "Motion zone devices (${motionZoneDevices.size() ?: 0} found)", multiple: true, submitOnChange: true, options: motionZoneDevices
@@ -76,27 +77,27 @@ def initialize() {
     ssdpSubscribe()
     createSelectedDevices()
     deleteUnselectedDevices()
-    runEvery5Minutes("ssdpDiscover")
 
-    subscribe(location, "alarmSystemStatus", alarmStatusHandler)
+	getChildDevices().findAll { it.name == 'DSC Alarm Partition' }.each { partitionDevice ->
+	    syncDeviceDataValue(partitionDevice, "userCode", settings.userCode)
+    }
+
+	subscribe(location, "alarmSystemStatus", alarmStatusHandler)
+
+    runEvery5Minutes("ssdpDiscover")
 }
 
 def alarmStatusHandler(evt) {
     log.debug "Alarm system status is ${evt.value}"
-    def partitionDevice = getChildDevices().find { it.externalUid == 'partition_1' }
-    if (partitionDevice == null) {
-    	return
+    getChildDevices().findAll { it.name == 'DSC Alarm Partition' && it.integrateSHM() }.each { partitionDevice ->
+        if (evt.value == 'off') {
+            partitionDevice.disarm()
+        } else if (evt.value == 'stay') {
+            partitionDevice.armStay()
+        } else if (evt.value == 'away') {
+            partitionDevice.armAway()
+        }
     }
-    if (evt.value == 'off') {
-    	partitionDevice.disarm()
-    } else if (evt.value == 'stay') {
-    	partitionDevice.armStay()
-    } else if (evt.value == 'away') {
-    	partitionDevice.armAway()
-    }
-//sendLocationEvent(name: "alarmSystemStatus", value: "away")
-//sendLocationEvent(name: "alarmSystemStatus", value: "stay")
-//sendLocationEvent(name: "alarmSystemStatus", value: "off")
 }
 
 def selectedDevices() {
@@ -262,16 +263,20 @@ def createSelectedDevices(devices) {
         def childDevice = getChildDevice(device.dni)
         if (!childDevice) {
             log.debug("Adding child device ${device.label}")
+            def data = [
+                "externalId": device.externalId,
+                "externalUid": device.uid,
+                "ipAddress": device.ipAddress,
+                "ipPort": device.ipPort,
+            ]
+            if (device.handler == 'DSC Alarm Partition') {
+                data["userCode"] = settings.userCode
+            }
             childDevice = addChildDevice(
                 "TenStartups", device.handler, device.dni, device.hubId, [
                     "name": device.name,
                     "label": device.label,
-                    "data": [
-                        "externalId": device.externalId,
-                        "externalUid": device.uid,
-                        "ipAddress": device.ipAddress,
-                        "ipPort": device.ipPort,
-                    ],
+                    "data": data,
                     completedSetup: true
                 ]
             )
