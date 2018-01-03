@@ -17,7 +17,7 @@ import groovy.json.JsonSlurper;
 
 preferences {
     section() {
-        input("user_code", "password", title: "Alarm Code", description: "The user code for the panel", required: true)
+        input("integrateSHM", "boolean", title: "Integrate with SHM", description: "Whether to integrate this partition with Smart Home Monitor", required: true)
     }
 }
 
@@ -43,10 +43,10 @@ metadata {
         multiAttributeTile(name: "status", type: "generic", width: 6, height: 4) {
             tileAttribute("device.partitionState", key: "PRIMARY_CONTROL") {
                 attributeState "disarmed", label: 'Disarmed', icon: "st.security.alarm.off", backgroundColor: "#79b821", defaultState: true
-                attributeState "in_exit_delay", label: 'Exit Delay', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
+                attributeState "in_exit_delay", label: 'In Exit Delay', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
                 attributeState "armed_stay", label: 'Armed (Stay)', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
                 attributeState "armed_away", label: 'Armed (Away)', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
-                attributeState "in_entry_delay", label: 'Entry Delay', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
+                attributeState "in_entry_delay", label: 'In Entry Delay', icon: "st.security.alarm.on", backgroundColor: "#ffa81e"
                 attributeState "alarming", label: 'Alarming!', icon: "st.home.home2", backgroundColor: "#ff4000"
                 attributeState "fire", label: 'Fire!', icon: "st.contact.contact.closed", backgroundColor: "#ff0000"
             }
@@ -87,6 +87,10 @@ def updated() {
     log.debug "Updated with settings: ${settings}"
 }
 
+def integrateSHM() {
+	return settings.integrateSHM
+}
+
 def disarm() {
     log.debug("Disarming alarm partition")
     sendCommand("disarm", true)
@@ -111,7 +115,7 @@ def refresh()
 def sendCommand(String commandPath, boolean sendCode = false) {
 	def path = "/api/partition/${getDataValue("externalId")}/${commandPath}"
     if (sendCode) {
-    	path = "${path}/${settings.user_code}"
+    	path = "${path}/${getDataValue("userCode")}"
     }
     new physicalgraph.device.HubAction(
         [
