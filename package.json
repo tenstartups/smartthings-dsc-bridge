@@ -27,8 +27,8 @@
     "rc": "*",
     "request": "*",
     "request-promise-native": "*",
-    "sails": "*",
-    "sails-disk": "*",
+    "sails": "0.12.14",
+    "sails-disk": "0.10.10",
     "uppercamelcase": "*"
   },
   "scripts": {
