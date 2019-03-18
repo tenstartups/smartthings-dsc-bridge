@@ -4,7 +4,7 @@
 # http://github.com/tenstartups/smartthings-dsc-bridge
 #
 
-FROM arm32v6/node:alpine
+FROM arm32v7/node:8-jessie
 
 LABEL maintainer="Marc Lennox <marc.lennox@gmail.com>"
 
@@ -13,11 +13,6 @@ ADD qemu-arm-static /usr/bin/
 # Set environment variables.
 ENV \
   TERM=xterm-color
-
-# Install packages.
-RUN \
-  apk --update add bash busybox-extras coreutils curl git nano procps rsync tar wget && \
-  rm -rf /var/cache/apk/*
 
 # Create app directory.
 WORKDIR /usr/src/app
