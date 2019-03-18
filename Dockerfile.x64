@@ -6,10 +6,15 @@
 
 FROM node:alpine
 
-# Install base packages.
+LABEL maintainer="Marc Lennox <marc.lennox@gmail.com>"
+
+# Set environment variables.
+ENV \
+  TERM=xterm-color
+
+# Install packages.
 RUN \
-  apk --update add \
-    git \
+  apk --update add bash busybox-extras coreutils curl git nano procps rsync tar wget && \
   rm -rf /var/cache/apk/*
 
 # Create app directory.
